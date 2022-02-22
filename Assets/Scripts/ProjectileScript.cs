@@ -9,7 +9,10 @@ public class ProjectileScript : MonoBehaviour
 
     public float ttl;
 
-    public float damage;
+    public int damage;
+
+    public ProjectileTarget target;
+
     void Start()
     {
         
@@ -22,20 +25,28 @@ public class ProjectileScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Enemy"))
+        if(collision.gameObject.CompareTag(target.ToString()))
+        {
+            collision.gameObject.GetComponent<HealthManager>().TakeDamage(damage);
+            ProjectileDestroy();
+            StopCoroutine(TTLTimer());
+        }
+        else if(collision.gameObject.CompareTag("Sensor"))
         {
             ProjectileDestroy();
             StopCoroutine(TTLTimer());
         }
     }
 
-    public void FireProjectile(Vector2 pos, Vector2 dir, float speed, float projectileTTL, float dmg)
+
+    public void FireProjectile(Vector2 pos, Vector2 dir, float speed, float projectileTTL, int dmg, ProjectileTarget Target)
     {
         transform.position = pos;
         moveSpeed = speed;
         moveDir = dir;
         ttl = projectileTTL;
         damage = dmg;
+        target = Target;
 
         gameObject.SetActive(true);
 
@@ -57,4 +68,6 @@ public class ProjectileScript : MonoBehaviour
         yield return new WaitForSeconds(ttl);
         ProjectileDestroy();
     }
+
+   
 }

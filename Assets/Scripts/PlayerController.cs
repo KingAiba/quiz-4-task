@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 10f;
     private PlayerInput playerInput;
 
+    private ProjectileShooter playerShooter;
+
     private Vector2 screenBounds;
     private float widthExtent;
     private float heightExtent;
@@ -16,6 +18,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
+        playerShooter = GetComponent<ProjectileShooter>();
 
         CalcScreenBounds();
     }
@@ -23,6 +26,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         movePlayer();
+        ShootOnInput();
     }
 
     private void FixedUpdate()
@@ -35,27 +39,35 @@ public class PlayerController : MonoBehaviour
         ConstrainPlayerToBounds();
     }
 
-    public void movePlayer()
+    private void movePlayer()
     {
         Vector2 target = new Vector2(playerInput.playerMousePosition.x, playerInput.playerMousePosition.y);
         target = Vector2.Lerp(target, transform.position, moveSpeed * Time.deltaTime);
         transform.position = target;
     }
 
-    public void ConstrainPlayerToBounds()
+    private void ConstrainPlayerToBounds()
     {
         Vector2 newPos = transform.position;
 
-        newPos.x = Mathf.Clamp(newPos.x, screenBounds.x * (-1 + widthExtent), screenBounds.x - widthExtent);
-        newPos.y = Mathf.Clamp(newPos.y, screenBounds.y * (-1 + heightExtent), screenBounds.y - heightExtent);
+        newPos.x = Mathf.Clamp(newPos.x, screenBounds.x * -1 + widthExtent, screenBounds.x - widthExtent);
+        newPos.y = Mathf.Clamp(newPos.y, screenBounds.y * -1 + heightExtent, screenBounds.y - heightExtent);
 
         transform.position = newPos;
     }
 
-    public void CalcScreenBounds()
+    private void CalcScreenBounds()
     {
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         widthExtent = GetComponent<SpriteRenderer>().bounds.extents.x;
         heightExtent = GetComponent<SpriteRenderer>().bounds.extents.y;
+    }
+
+    private void ShootOnInput()
+    {
+        if(playerInput.isMousePressed)
+        {
+            playerShooter.Shoot();
+        }
     }
 }
