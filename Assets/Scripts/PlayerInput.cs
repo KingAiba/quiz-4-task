@@ -12,9 +12,11 @@ public class PlayerInput : MonoBehaviour
     public bool isMousePressed;
     public bool isSpacePressed;
 
+    private GameManager gameManager;
+
     void Start()
     {
-        
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     
@@ -26,16 +28,22 @@ public class PlayerInput : MonoBehaviour
 
     public void GetMouseInput()
     {
-        rawPlayerMousePosition = Input.mousePosition;
-        playerMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if(!gameManager.isPaused)
+        {
+            rawPlayerMousePosition = Input.mousePosition;
+            playerMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        isMousePressed = Input.GetKey(KeyCode.Mouse0);
+            isMousePressed = Input.GetKey(KeyCode.Mouse0);
+        }
+
     }
 
     public void GetKeyBoardInput()
     {
-        vhInputVector = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
-
-        isSpacePressed = Input.GetKey(KeyCode.Space);
+        if (!gameManager.isPaused)
+        {
+            vhInputVector = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+            isSpacePressed = Input.GetKey(KeyCode.Space);
+        }
     }
 }
