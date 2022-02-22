@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     public int curlevel;
 
-    public bool isGameActive = true;
+    public bool isGameActive = false;
     public bool isPaused = false;
 
     public HealthManager playerManager;
@@ -27,9 +27,17 @@ public class GameManager : MonoBehaviour
 
     public GameObject GameOverScreen;
 
+    public SpawnManager Spawner;
+
+    public int playerMaxHp = 100;
+
+    public bool isGameOver = false;
+
     void Start()
     {
         //playerManager = GameObject.Find("Player").GetComponent<HealthManager>();
+        Spawner = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        Spawner.gameManager = this;
     }
 
     
@@ -37,20 +45,25 @@ public class GameManager : MonoBehaviour
     {
         UpdateInGameUI();
         Pause();
+        GameEnd();
     }
 
     public void StartGame(int level, Sprite bg)
     {
+        isGameOver = false;
         background.gameObject.SetActive(true);
         background.GetComponent<SpriteRenderer>().sprite = bg;
         curlevel = level;
-
+        Spawner.SetSpawnSmount(5 * level);
         isGameActive = true;
 
         playerManager.gameObject.SetActive(true);
+        playerManager.isDead = false;
+        playerManager.SetHealth(playerMaxHp);
 
         mainMenu.SetActive(false);
         inGameUI.SetActive(true);
+        InitializeGameUI();
     }
 
     public void LevelOver()
@@ -124,5 +137,21 @@ public class GameManager : MonoBehaviour
 
         PauseMenu.SetActive(false);
         mainMenu.SetActive(true);
+    }
+
+    public void GameEnd()
+    {
+        if((Spawner.amount <= 0 || playerManager.isDead) && isGameActive)
+        {
+            GameOverScreen.SetActive(true);
+            isGameActive = false;
+            isGameOver = true;
+        }
+
+        if(isGameOver && Input.GetKeyDown(KeyCode.R))
+        {
+            GameOverScreen.SetActive(false);
+            BackToMainMenu();
+        }
     }
 }
