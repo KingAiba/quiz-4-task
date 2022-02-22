@@ -360,7 +360,7 @@ MonoBehaviour:
   canShoot: 1
   projSpeed: 5
   projTTL: 15
-  projDamage: 10
+  projDamage: 25
 --- !u!114 &80869307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2069,7 +2069,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   score: 0
   curlevel: 0
-  isGameActive: 1
+  isGameActive: 0
   isPaused: 0
   playerManager: {fileID: 80869307}
   inGameUI: {fileID: 841585435}

@@ -45,6 +45,11 @@ public class GameManager : MonoBehaviour
     {
         UpdateInGameUI();
         Pause();
+        
+    }
+
+    private void LateUpdate()
+    {
         GameEnd();
     }
 
@@ -54,7 +59,7 @@ public class GameManager : MonoBehaviour
         background.gameObject.SetActive(true);
         background.GetComponent<SpriteRenderer>().sprite = bg;
         curlevel = level;
-        Spawner.SetSpawnSmount(5 * level);
+        Spawner.SetSpawnSmount(5);
         isGameActive = true;
 
         playerManager.gameObject.SetActive(true);
@@ -141,17 +146,25 @@ public class GameManager : MonoBehaviour
 
     public void GameEnd()
     {
-        if((Spawner.amount <= 0 || playerManager.isDead) && isGameActive)
+        if (isGameActive)
         {
-            GameOverScreen.SetActive(true);
-            isGameActive = false;
-            isGameOver = true;
+            int am = GameObject.FindGameObjectsWithTag("Enemy").Length;
+            if (playerManager.isDead || am < 1)
+            {
+                GameOverScreen.SetActive(true);
+                isGameActive = false;
+                isGameOver = true;
+            }
+
+
         }
 
-        if(isGameOver && Input.GetKeyDown(KeyCode.R))
+        if (isGameOver && Input.GetKeyDown(KeyCode.R))
         {
+            inGameUI.SetActive(false);
             GameOverScreen.SetActive(false);
             BackToMainMenu();
         }
+
     }
 }
